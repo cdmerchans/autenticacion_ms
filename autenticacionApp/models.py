@@ -28,7 +28,7 @@ class restauranteUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('Correo electrónico', max_length = 50)
     first_name = models.CharField('Nombres', max_length = 50)
     last_name = models.CharField('Apellidos', max_length = 50)
-    phone_number = models.CharField('Número de teléfono', max_length = 10)
+    phone_number = models.BigIntegerField('Número de teléfono')
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
