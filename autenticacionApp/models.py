@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.contrib.auth.hashers import make_password
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, first_name, last_name, phone_number, password=None):
+    def create_user(self, username, email, first_name, last_name, phone_number, password):
         if not username:
             raise ValueError('Users must have an username')
         user = self.model(username=username)
@@ -18,6 +18,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username, first_name, last_name, phone_number, password, email):
         user = self.create_user(username = username, email = email, first_name = first_name, last_name = last_name, phone_number = phone_number, password = password)
         user.is_superuser = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -29,6 +30,7 @@ class restauranteUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField('Nombres', max_length = 50)
     last_name = models.CharField('Apellidos', max_length = 50)
     phone_number = models.BigIntegerField('Número de teléfono')
+    is_staff = models.BooleanField(default=False)
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
