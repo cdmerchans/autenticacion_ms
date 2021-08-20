@@ -40,4 +40,3 @@ class UserUpdateView(UpdateView):
     form_class = Updateform
     template_name = 'restauranteuser_update_form.html'
     success_url = reverse_lazy('login')
-
