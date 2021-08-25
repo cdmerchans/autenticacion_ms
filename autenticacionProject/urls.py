@@ -16,7 +16,7 @@ Including another URLconf
 from django.urls import path
 from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView)
 from autenticacionApp.views import VerifyTokenView
-from autenticacionApp.views import CrearUsuario, ConsultarUsuario
+from autenticacionApp.views import CrearUsuario, ConsultarUsuario, BuscarUsuario
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 
@@ -27,5 +27,6 @@ urlpatterns = [
     path('token/verify/', VerifyTokenView.as_view()),
     path('registro/', csrf_exempt(CrearUsuario.as_view())),
     path('actualizar/', csrf_exempt(ConsultarUsuario.as_view())),
+    path('buscar/', csrf_exempt(BuscarUsuario.as_view())),
 ]
 
