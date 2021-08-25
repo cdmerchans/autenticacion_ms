@@ -5,6 +5,14 @@ from rest_framework_simplejwt.views import TokenVerifyView
 from rest_framework_simplejwt.backends import TokenBackend
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
+from autenticacionApp.models import restauranteUser
+from django.urls import reverse_lazy
+
+from rest_framework.views import APIView
+from django.contrib.auth.hashers import make_password
+from django.http import JsonResponse
+import re
+
 class VerifyTokenView(TokenVerifyView):
 
     def post(self, request, *args, **kwargs):
@@ -18,33 +26,6 @@ class VerifyTokenView(TokenVerifyView):
         except TokenError as e:
             raise InvalidToken(e.args[0])
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
-from django.views.generic.edit import CreateView
-from autenticacionApp.models import restauranteUser
-from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
-
-from autenticacionApp.forms import Signupform
-
-class UserCreateView(CreateView):
-    model = restauranteUser
-    form_class = Signupform
-    template_name = 'restauranteuser_create_form.html'
-    success_url = reverse_lazy('login')
-
-from django.views.generic.edit import UpdateView
-from autenticacionApp.forms import Updateform
-
-class UserUpdateView(UpdateView):
-    model = restauranteUser
-    form_class = Updateform
-    template_name = 'restauranteuser_update_form.html'
-    success_url = reverse_lazy('login')
-
-from rest_framework.views import APIView
-from django.contrib.auth.hashers import make_password
-from django.http import JsonResponse
-import re
 
 class CrearUsuario(APIView):
 
@@ -92,7 +73,7 @@ class ConsultarUsuario(APIView):
     def get(self, request, *args, **kwargs):
 
         username = request.data['username']
-        usuario = restauranteUser.objects.filter(username = username).values('username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
+        usuario = restauranteUser.objects.filter(username = username).values('id', 'username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
 
         if not usuario:
 
@@ -105,7 +86,7 @@ class ConsultarUsuario(APIView):
             return JsonResponse(usuario, safe=False, status=status.HTTP_200_OK)
 
 
-    def post(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
 
         username = request.data['username']
         email = request.data['email']
@@ -141,3 +122,20 @@ class ConsultarUsuario(APIView):
             elif not badera_phone_number:
 
                 return Response({"mensaje": "El telefono no es válido"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+class BuscarUsuario(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        id_buscar = request.data['id']
+        usuario = restauranteUser.objects.filter(id = id_buscar).values('id', 'username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
+
+        if not usuario:
+
+            return Response({"mensaje": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+  
+            usuario = list(usuario)
+
+            return JsonResponse(usuario, safe=False, status=status.HTTP_200_OK)
