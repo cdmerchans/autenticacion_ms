@@ -72,18 +72,25 @@ class ConsultarUsuario(APIView):
 
     def get(self, request, *args, **kwargs):
 
-        username = request.data['username']
-        usuario = restauranteUser.objects.filter(username = username).values('id', 'username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
+        username = request.query_params.get('username', None)
 
-        if not usuario:
+        if username is None:
 
-            return Response({"mensaje": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"mensaje": "El username está vacio"},status=status.HTTP_404_NOT_FOUND)
 
         else:
-  
-            usuario = list(usuario)
 
-            return JsonResponse(usuario, safe=False, status=status.HTTP_200_OK)
+            usuario = restauranteUser.objects.filter(username = username).values('id', 'username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
+
+            if not usuario:
+
+                return Response({"mensaje": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+            else:
+    
+                usuario = list(usuario)
+
+                return JsonResponse(usuario, safe=False, status=status.HTTP_200_OK)
 
 
     def put(self, request, *args, **kwargs):
@@ -125,10 +132,9 @@ class ConsultarUsuario(APIView):
 
 class BuscarUsuario(APIView):
 
-    def get(self, request, *args, **kwargs):
+    def get(self,request, pk):
 
-        id_buscar = request.data['id']
-        usuario = restauranteUser.objects.filter(id = id_buscar).values('id', 'username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
+        usuario = restauranteUser.objects.filter(pk=pk).values('id', 'username', 'email', 'first_name', 'last_name', 'address', 'phone_number')
 
         if not usuario:
 

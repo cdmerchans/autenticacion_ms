@@ -19,14 +19,14 @@ from autenticacionApp.views import VerifyTokenView
 from autenticacionApp.views import CrearUsuario, ConsultarUsuario, BuscarUsuario
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-
+from django.conf.urls import url 
 
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(),name='login'),
     path('token/refresh/', TokenRefreshView.as_view()),
     path('token/verify/', VerifyTokenView.as_view()),
     path('registro/', csrf_exempt(CrearUsuario.as_view())),
-    path('actualizar/', csrf_exempt(ConsultarUsuario.as_view())),
-    path('buscar/', csrf_exempt(BuscarUsuario.as_view())),
+    path('actualizar', csrf_exempt(ConsultarUsuario.as_view())),
+    url(r'buscar/(?P<pk>[0-9]+)$', csrf_exempt(BuscarUsuario.as_view())),
 ]
 
